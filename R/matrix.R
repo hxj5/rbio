@@ -41,3 +41,18 @@ mtx_df2sparse_mtx <- function(df, row, col, value, na.values = 0) {
   return(s_mtx)
 }
 
+
+mtx_save_sparse_mtx <- function(mtx, out_dir, mtx_fn, row_fn = NULL, col_fn = NULL) {
+  func <- "mtx_save_sparse_mtx"
+
+  os_safe_mkdir(out_dir, recursive = TRUE)
+
+  row_fpath <- os_join_path(out_dir, row_fn)
+  col_fpath <- os_join_path(out_dir, col_fn)
+  mtx_fpath <- os_join_path(out_dir, mtx_fn)
+
+  write(rownames(mtx), row_fpath, sep = "\n")
+  write(colnames(mtx), col_fpath, sep = "\n")
+  Matrix::writeMM(mtx, mtx_fpath)
+}
+
