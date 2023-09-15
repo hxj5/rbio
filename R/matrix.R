@@ -6,14 +6,12 @@
 # - Matrix
 
 mtx_df2mtx <- function(df, row, col, value, na.values = 0) {
-  func <- "mtx_df2mtx"
-
   if (! row %in% colnames(df))
-    stop(sprintf("[E::%s] column '%s' is not in dataframe.", func, row))
+    stop(sprintf("column '%s' is not in dataframe.", row))
   if (! col %in% colnames(df))
-    stop(sprintf("[E::%s] column '%s' is not in dataframe.", func, col))
+    stop(sprintf("column '%s' is not in dataframe.", col))
   if (! value %in% colnames(df))
-    stop(sprintf("[E::%s] column '%s' is not in dataframe.", func, value))
+    stop(sprintf("column '%s' is not in dataframe.", value))
 
   df <- df[, c(row, col, value)]
   colnames(df) <- c("row", "col", "value")
@@ -34,8 +32,6 @@ mtx_df2mtx <- function(df, row, col, value, na.values = 0) {
 
 
 mtx_df2sparse_mtx <- function(df, row, col, value, na.values = 0) {
-  func <- "mtx_df2sparse_mtx"
-
   mtx <- mtx_df2mtx(df, row = row, col = col, value = value)
   s_mtx <- as(mtx, "dgCMatrix")
   return(s_mtx)
@@ -43,8 +39,6 @@ mtx_df2sparse_mtx <- function(df, row, col, value, na.values = 0) {
 
 
 mtx_save_sparse_mtx <- function(mtx, out_dir, mtx_fn, row_fn = NULL, col_fn = NULL) {
-  func <- "mtx_save_sparse_mtx"
-
   os_safe_mkdir(out_dir, recursive = TRUE)
 
   row_fpath <- os_join_path(out_dir, row_fn)
