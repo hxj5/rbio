@@ -1,16 +1,23 @@
 Package: rrbio
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Handy R Routine Functions for Bioinformatics Analysis
+Version: 0.0.1
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Xianjie",
+           family = "Huang",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
+           email = "xianjie5@connect.hku.hk",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to
-    pick a license
+Description: Handy R Routine Functions for Bioinformatics Analysis.
+URL: https://github.com/hxj5/rrbio
+BugReports: https://github.com/hxj5/rrbio/issues
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+Imports: 
+    magrittr,
+    dplyr,
+    tidyr,
+    methods,
+    Matrix
