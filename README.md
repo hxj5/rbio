@@ -1,6 +1,6 @@
 # rrbio
 
-Handy R functions for bioinformatics analysis
+Handy R Routine Functions for Bioinformatics Analysis
 
 ## Installation
 
