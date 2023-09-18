@@ -10,14 +10,12 @@
 #' @return Void.
 #'
 #' @section Details:
-#' It will call `stop` and raise an error if the path does not exist. 
+#' It will call \code{\link[base]{stop}} and raise an error if the path does not exist. 
 #'
 #' @export
 #' @examples
-#' \dontrun{
-#' os_assert_e("~/test")
-#' os_assert_e("~/debug/test.R")
-#' }
+#' \dontrun{os_assert_e("~/test")
+#' os_assert_e("~/debug/test.R")}
 os_assert_e <- function(path, type = "file") {
   if (type == "file")
     if (! file.exists(path))
@@ -70,5 +68,4 @@ os_safe_mkdir <- function(dir, recursive = TRUE) {
   if (! dir.exists(dir))
     dir.create(dir, recursive = recursive)
 }
-
 
