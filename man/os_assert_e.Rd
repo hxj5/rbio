@@ -20,12 +20,10 @@ directory.
 }
 \section{Details}{
 
-It will call \code{stop} and raise an error if the path does not exist.
+It will call \code{\link[base]{stop}} and raise an error if the path does not exist.
 }
 
 \examples{
-\dontrun{
-os_assert_e("~/test")
-os_assert_e("~/debug/test.R")
-}
+\dontrun{os_assert_e("~/test")
+os_assert_e("~/debug/test.R")}
 }
