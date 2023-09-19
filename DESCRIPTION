@@ -1,6 +1,6 @@
 Package: rrbio
 Title: Handy R Routine Functions for Bioinformatics Analysis
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: 
     person(given = "Xianjie",
            family = "Huang",
