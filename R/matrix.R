@@ -59,12 +59,15 @@ mtx_df2mtx <- function(df, row, col, value, na.values = 0) {
     stop(sprintf("column '%s' is not in dataframe.", value))
 
   df <- df[, c(row, col, value)]
-  colnames(df) <- c("row", "col", "value")
+  colnames(df) <- c("df_row", "df_col", "df_value")
 
   df_tran <- df %>%
-    tidyr::spread(key = col, value = value)
+    tidyr::spread(key = "df_col", value = "df_value")
 
   row_names <- df_tran[, 1]  
+  if (! is.null(dim(row_names))) {   # not a vector
+    row_names <- row_names$df_row
+  }
   df_tran <- df_tran[, -1]
 
   if (! is.na(na.values) && ! is.null(na.values))
@@ -180,7 +183,7 @@ mtx_load_sparse_mtx <- function(in_dir, mtx_fn, row_fn = NULL, col_fn = NULL,
     os_assert_e(row_fpath)
     row_anno <- read.delim(row_fpath, header = row_header, 
                            stringsAsFactors = FALSE)
-    row_names <- row_anno[, 1]
+    row_names <- row_anno[, 1]  # it is safe for dataframe, but not for tibble.
     rownames(mtx) <- row_names
   }
 
@@ -189,7 +192,7 @@ mtx_load_sparse_mtx <- function(in_dir, mtx_fn, row_fn = NULL, col_fn = NULL,
     os_assert_e(col_fpath)
     col_anno <- read.delim(col_fpath, header = col_header, 
                            stringsAsFactors = FALSE)
-    col_names <- col_anno[, 1]
+    col_names <- col_anno[, 1]  
     colnames(mtx) <- col_names
   }
 
