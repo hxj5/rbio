@@ -2,11 +2,8 @@
 
 export(mtx_df2mtx)
 export(mtx_df2sparse_mtx)
-<<<<<<< HEAD
 export(mtx_mtx2df)
 export(mtx_sparse_mtx2df)
-=======
->>>>>>> 42582cea2f43dac457911e8857992e2174bb4d6c
 export(os_assert_e)
 export(os_join_path)
 export(os_safe_mkdir)

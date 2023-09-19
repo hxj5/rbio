@@ -4,17 +4,13 @@
 \alias{df-mtx-convert}
 \alias{mtx_df2mtx}
 \alias{mtx_df2sparse_mtx}
-<<<<<<< HEAD
 \alias{mtx_mtx2df}
 \alias{mtx_sparse_mtx2df}
-=======
->>>>>>> 42582cea2f43dac457911e8857992e2174bb4d6c
 \title{DataFrame and Matrix Conversion}
 \usage{
 mtx_df2mtx(df, row, col, value, na.values = 0)
 
 mtx_df2sparse_mtx(df, row, col, value, na.values = 0)
-<<<<<<< HEAD
 
 mtx_mtx2df(mtx, row, col, value)
 
@@ -23,12 +19,6 @@ mtx_sparse_mtx2df(mtx, row, col, value, full = FALSE)
 \arguments{
 \item{df}{A long-format dataframe. It should contain at least 3 columns
 specified by params \code{row}, \code{col}, and \code{value}.}
-=======
-}
-\arguments{
-\item{df}{A dataframe. It should contain at least 3 columns specified by
-params \code{row}, \code{col}, and \code{value}.}
->>>>>>> 42582cea2f43dac457911e8857992e2174bb4d6c
 
 \item{row}{A string. The name of a column in \code{df} that contains the row
 names of the matrix.}
@@ -41,7 +31,6 @@ values of the matrix.}
 
 \item{na.values}{The value to replace NAs introduced during conversion.
 Setting to \code{NA} or \code{NULL} to skip the value replacement.}
-<<<<<<< HEAD
 
 \item{mtx}{A matrix. It should be regular matrix for \code{mtx_mtx2df()} and
 sparse matrix of \code{dgCMatrix} class for \code{mtx_sparse_mtx2df()}.}
@@ -58,17 +47,6 @@ sparse matrix of \code{dgCMatrix} class for \code{mtx_sparse_mtx2df()}.}
 }
 \description{
 The conversion between long-format dataframe and (sparse) matrix.
-=======
-}
-\value{
-\itemize{
-\item The \code{mtx_df2mtx} returns a matrix.
-\item The \code{mtx_df2sparse_mtx} returns a sparse matrix of \code{dgCMatrix} type.
-}
-}
-\description{
-The conversion between dataframe and (sparse) matrix.
->>>>>>> 42582cea2f43dac457911e8857992e2174bb4d6c
 }
 \section{Notes}{
 
@@ -84,13 +62,8 @@ df <- data.frame(
   v = 1:3,
   stringsAsFactors = FALSE
 )
-<<<<<<< HEAD
 mtx1 <- mtx_df2mtx(df, row = "x", col = "y", value = "v")
 mtx2 <- mtx_df2sparse_mtx(df, row = "x", col = "y", value = "v")
 df1 <- mtx_mtx2df(mtx1, row = "x", col = "y", value = "v")
 df2 <- mtx_sparse_mtx2df(mtx2, row = "x", col = "y", value = "v")
-=======
-mtx <- mtx_df2mtx(df, row = "x", col = "y", value = "v")
-mtx2 <- mtx_df2sparse_mtx(df, row = "x", col = "y", value = "v")
->>>>>>> 42582cea2f43dac457911e8857992e2174bb4d6c
 }
