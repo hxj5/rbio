@@ -40,6 +40,7 @@
 #' mtx2 <- mtx_df2sparse_mtx(df, row = "x", col = "y", value = "v")
 #' df1 <- mtx_mtx2df(mtx1, row = "x", col = "y", value = "v")
 #' df2 <- mtx_sparse_mtx2df(mtx2, row = "x", col = "y", value = "v")
+#'
 #' @name df-mtx-convert
 NULL
 
@@ -120,15 +121,97 @@ mtx_sparse_mtx2df <- function(mtx, row, col, value, full = FALSE) {
 }
 
 
+#' Sparse Matrix Input/Output
+#'
+#' These functions are aimed to load and save the sparse matrices in 
+#' Matrix Market Format, together with its annotation files.
+#'
+#' @param mtx A matrix. It could be either sparse matrix or regular matrix.
+#' @param in_dir A string. Path to the input directory.
+#' @param out_dir A string. Path to the output directory.
+#' @param mtx_fn A string. Path to the file storing the sparse matrix, in
+#'   Matrix Market Format.
+#' @param row_fn A string. Path to the file storing the annotation of matrix
+#'   rows. Setting to NULL if there is no such annotation.
+#' @param col_fn A string. Path to the file storing the annotation of matrix
+#'   columns. Setting to NULL if there is no such annotation.
+#' @param row_header A bool. Whether the row annotation file has header.
+#' @param col_header A bool. Whether the column annotation file has header.
+#' @return
+#' * The `mtx_load_sparse_mtx()` returns a sparse matrix of `dgCMatrix` class.
+#' * The `mtx_save_sparse_mtx()` returns Void.
+#' 
+#' @section Notes:
+#' The matrix file, row annotation file (if available) and column annotation
+#' file (if available) should be in the same directory. 
+#'
+#' The row and column names of the matrix should be the first column of the
+#' corresponding annotation file.
+#'
+#' @examples
+#' m <- matrix(rpois(20, 1), nrow = 5)
+#' rownames(m) <- paste0("x", 1:5)
+#' colnames(m) <- paste0("y", 1:4)
+#' mtx_save_sparse_mtx(m, "~/tmp_rrbio", "matrix.mtx", "rows.tsv", "cols.tsv")
+#' m2 <- mtx_load_sparse_mtx("~/tmp_rrbio", "matrix.mtx", "rows.tsv", "cols.tsv")
+#'
+#' @name spmtx-io
+NULL
+
+
+#' @export
+#' @rdname spmtx-io
+mtx_load_sparse_mtx <- function(in_dir, mtx_fn, row_fn = NULL, col_fn = NULL,
+                                row_header = FALSE, col_header = FALSE) {
+  os_assert_e(in_dir)
+
+  mtx_fpath <- os_join_path(in_dir, mtx_fn)
+  os_assert_e(mtx_fpath)
+  mtx <- Matrix::readMM(mtx_fpath)
+
+  if (! is.null(row_fn)) {
+    row_fpath <- os_join_path(in_dir, row_fn)
+    os_assert_e(row_fpath)
+    row_anno <- read.delim(row_fpath, header = row_header, 
+                           stringsAsFactors = FALSE)
+    row_names <- row_anno[, 1]
+    rownames(mtx) <- row_names
+  }
+
+  if (! is.null(col_fn)) {
+    col_fpath <- os_join_path(in_dir, col_fn)
+    os_assert_e(col_fpath)
+    col_anno <- read.delim(col_fpath, header = col_header, 
+                           stringsAsFactors = FALSE)
+    col_names <- col_anno[, 1]
+    colnames(mtx) <- col_names
+  }
+
+  mtx <- methods::as(mtx, "dgCMatrix")
+  return(mtx)
+}
+
+
+#' @export
+#' @rdname spmtx-io
 mtx_save_sparse_mtx <- function(mtx, out_dir, mtx_fn, row_fn = NULL, col_fn = NULL) {
   os_safe_mkdir(out_dir, recursive = TRUE)
 
-  row_fpath <- os_join_path(out_dir, row_fn)
-  col_fpath <- os_join_path(out_dir, col_fn)
-  mtx_fpath <- os_join_path(out_dir, mtx_fn)
+  if (! any(class(mtx) %in% c("dgCMatrix", "dgTMatrix"))) {
+    mtx <- methods::as(mtx, "dgTMatrix")
+  }
 
-  write(rownames(mtx), row_fpath, sep = "\n")
-  write(colnames(mtx), col_fpath, sep = "\n")
+  mtx_fpath <- os_join_path(out_dir, mtx_fn)
   Matrix::writeMM(mtx, mtx_fpath)
+
+  if (! is.null(row_fn)) {
+    row_fpath <- os_join_path(out_dir, row_fn)
+    write(rownames(mtx), row_fpath, sep = "\n")
+  }
+
+  if (! is.null(col_fn)) {
+    col_fpath <- os_join_path(out_dir, col_fn)
+    write(colnames(mtx), col_fpath, sep = "\n")
+  }
 }
 

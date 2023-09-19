@@ -8,5 +8,6 @@
 #' @importClassesFrom Matrix dgTMatrix
 #' @importFrom magrittr %>%
 #' @importFrom methods as
+#' @importFrom utils read.delim
 ## usethis namespace: end
 NULL
