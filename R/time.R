@@ -15,19 +15,21 @@ time_time <- function(time = NULL) {
 #'
 #' These functions are aimed to format time string.
 #'
-#' @param time A `POSIXct` object. Setting to NULL to use current time.
+#' @param time A `POSIXct` object. Setting to `NULL` to use current time.
 #' @param sep A string. Delimiter to join the sub-string in `format`.
-#' @param format A string. A `format` string, e.g., "%Y-%m-%d %H:%M:%S".
+#' @param format A string. A `format` string, e.g., "`%Y-%m-%d %H:%M:%S`".
 #' @return Every function returns a string.
 #'
 #' @section Notes:
 #' The `format` string for different functions:
-#' * for `time_str_date()`: "%Y", "%m", "%d" joined by `sep`.
-#' * for `time_str_time()`: "%H", "%M", "%S" joined by `sep`.
-#' * for `time_str_datetime()`: "%Y-%m-%d %H:%M:%S".
-#' * for `time_str_datetime0()`: "%Y%m%d %H:%M:%S".
-#' * for `time_strftime()`: specified by user. Default is "%Y-%m-%d %H:%M:%S"
-#'   when `format` is set to NULL.
+#' * for `time_str_date()`: "`%Y`", "`%m`", "`%d`" joined by `sep`.
+#' * for `time_str_time()`: "`%H`", "`%M`", "`%S`" joined by `sep`.
+#' * for `time_str_datetime()`: "`%Y-%m-%d %H:%M:%S`".
+#' * for `time_str_datetime0()`: "`%Y%m%d %H:%M:%S`".
+#' * for `time_strftime()`: specified by user. Default is "`%Y-%m-%d %H:%M:%S`"
+#'   when `format` is set to `NULL`.
+#'
+#' @seealso [POSIXct] and [base::format()]
 #'
 #' @examples
 #' p <- as.POSIXct("2023-09-19 10:00:00")

@@ -29,7 +29,7 @@ names of the matrix.}
 \item{value}{A string. The name of a column in \code{df} that contains the
 values of the matrix.}
 
-\item{na.values}{The value to replace NAs introduced during conversion.
+\item{na.values}{The value to replace \code{NA}s introduced during conversion.
 Setting to \code{NA} or \code{NULL} to skip the value replacement.}
 
 \item{mtx}{A matrix. It should be regular matrix for \code{mtx_mtx2df()} and
@@ -67,4 +67,8 @@ mtx2 <- mtx_df2sparse_mtx(df, row = "x", col = "y", value = "v")
 df1 <- mtx_mtx2df(mtx1, row = "x", col = "y", value = "v")
 df2 <- mtx_sparse_mtx2df(mtx2, row = "x", col = "y", value = "v")
 
+}
+\seealso{
+\code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} and
+\code{\link[Matrix:dgTMatrix-class]{dgTMatrix}}
 }

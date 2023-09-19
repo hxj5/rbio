@@ -17,11 +17,16 @@ Void.
 \description{
 This function is aimed to write a dataframe into a TSV file in a
 commonly used format.
-Specifically, it calls \code{[utils]{write.table}} internally with
+Specifically, it calls \code{\link[utils:write.table]{write.table()}}
+internally with
 parameters \code{sep = "\\t"}, \code{quote = FALSE}, \code{row.names = FALSE}, and
 \code{col.names = TRUE}.
 }
 \examples{
-\dontrun{df <- data.frame(x = 1:5, y = 2:6)
+\dontrun{
+df <- data.frame(x = 1:5, y = 2:6)
 io_write_tsv(df, "~/test_rrbio/io_write_tsv.tsv")}
+}
+\seealso{
+\code{\link[=write.table]{write.table()}}
 }

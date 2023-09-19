@@ -15,7 +15,7 @@
 #'   names of the matrix.
 #' @param value A string. The name of a column in `df` that contains the
 #'   values of the matrix.
-#' @param na.values The value to replace NAs introduced during conversion.
+#' @param na.values The value to replace `NA`s introduced during conversion.
 #'   Setting to `NA` or `NULL` to skip the value replacement.
 #' @param full A bool. Whether to return all combinations of rows and columns.
 #' @return
@@ -28,6 +28,9 @@
 #' The param `na.values` could affect the `NA`s that already exist in the
 #' dataframe or matrix before conversion, which could lead to an unexpected
 #' result.
+#'
+#' @seealso \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} and 
+#'   \code{\link[Matrix:dgTMatrix-class]{dgTMatrix}}
 #'
 #' @examples
 #' df <- data.frame(
@@ -147,6 +150,9 @@ mtx_sparse_mtx2df <- function(mtx, row, col, value, full = FALSE) {
 #'
 #' The row and column names of the matrix should be the first column of the
 #' corresponding annotation file.
+#'
+#' @seealso \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} and 
+#'   \code{\link[Matrix:dgTMatrix-class]{dgTMatrix}}
 #'
 #' @examples
 #' m <- matrix(rpois(20, 1), nrow = 5)

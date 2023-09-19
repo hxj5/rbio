@@ -20,11 +20,11 @@ time_str_datetime0(time = NULL)
 time_strftime(time = NULL, format = NULL)
 }
 \arguments{
-\item{time}{A \code{POSIXct} object. Setting to NULL to use current time.}
+\item{time}{A \code{POSIXct} object. Setting to \code{NULL} to use current time.}
 
 \item{sep}{A string. Delimiter to join the sub-string in \code{format}.}
 
-\item{format}{A string. A \code{format} string, e.g., "\%Y-\%m-\%d \%H:\%M:\%S".}
+\item{format}{A string. A \code{format} string, e.g., "\verb{\%Y-\%m-\%d \%H:\%M:\%S}".}
 }
 \value{
 Every function returns a string.
@@ -36,12 +36,12 @@ These functions are aimed to format time string.
 
 The \code{format} string for different functions:
 \itemize{
-\item for \code{time_str_date()}: "\%Y", "\%m", "\%d" joined by \code{sep}.
-\item for \code{time_str_time()}: "\%H", "\%M", "\%S" joined by \code{sep}.
-\item for \code{time_str_datetime()}: "\%Y-\%m-\%d \%H:\%M:\%S".
-\item for \code{time_str_datetime0()}: "\%Y\%m\%d \%H:\%M:\%S".
-\item for \code{time_strftime()}: specified by user. Default is "\%Y-\%m-\%d \%H:\%M:\%S"
-when \code{format} is set to NULL.
+\item for \code{time_str_date()}: "\verb{\%Y}", "\verb{\%m}", "\verb{\%d}" joined by \code{sep}.
+\item for \code{time_str_time()}: "\verb{\%H}", "\verb{\%M}", "\verb{\%S}" joined by \code{sep}.
+\item for \code{time_str_datetime()}: "\verb{\%Y-\%m-\%d \%H:\%M:\%S}".
+\item for \code{time_str_datetime0()}: "\verb{\%Y\%m\%d \%H:\%M:\%S}".
+\item for \code{time_strftime()}: specified by user. Default is "\verb{\%Y-\%m-\%d \%H:\%M:\%S}"
+when \code{format} is set to \code{NULL}.
 }
 }
 
@@ -57,4 +57,7 @@ time_str_time()
 time_str_datetime()  
 time_str_datetime0()
 
+}
+\seealso{
+\link{POSIXct} and \code{\link[base:format]{base::format()}}
 }

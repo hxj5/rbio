@@ -64,3 +64,7 @@ mtx_save_sparse_mtx(m, "~/test_rrbio", "matrix.mtx", "rows.tsv", "cols.tsv")
 m2 <- mtx_load_sparse_mtx("~/test_rrbio", "matrix.mtx", "rows.tsv", "cols.tsv")
 
 }
+\seealso{
+\code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} and
+\code{\link[Matrix:dgTMatrix-class]{dgTMatrix}}
+}

@@ -18,3 +18,6 @@ Force Flush Print
 \examples{
 io_ffprint("hello world!")
 }
+\seealso{
+\code{\link[=print]{print()}}
+}

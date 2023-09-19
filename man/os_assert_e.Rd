@@ -9,7 +9,7 @@ os_assert_e(path, type = "file")
 \arguments{
 \item{path}{A string. Path to a file or directory.}
 
-\item{type}{A string. The path type, "file" or "dir".}
+\item{type}{A string. The path type, "\code{file}" or "\code{dir}".}
 }
 \value{
 Void.
@@ -20,10 +20,12 @@ directory.
 }
 \section{Details}{
 
-It will call \code{\link[base]{stop}} and raise an error if the path does not exist.
+It will call \code{\link[base:stop]{stop()}} and raise an error if the path
+does not exist.
 }
 
 \examples{
-\dontrun{os_assert_e("~/test")
+\dontrun{
+os_assert_e("~/test")
 os_assert_e("~/debug/test.R")}
 }
