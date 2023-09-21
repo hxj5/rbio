@@ -1,4 +1,4 @@
-# io.R
+# io.R - input/output routine
 
 #' Force Flush Print
 #'

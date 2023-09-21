@@ -1,4 +1,4 @@
-# time.R
+# time.R - time routine
 
 
 #' @keywords internal

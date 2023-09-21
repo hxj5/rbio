@@ -1,4 +1,4 @@
-# os.R
+# os.R - operating system routine
 
 #' Assert Existencce of File or Directory
 #'

@@ -1,4 +1,4 @@
-# matrix.R
+# matrix.R - (sparse) matrix routine
 
 
 #' DataFrame and Matrix Conversion
