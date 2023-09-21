@@ -4,6 +4,8 @@
 \alias{spmtx-io}
 \alias{mtx_load_sparse_mtx}
 \alias{mtx_save_sparse_mtx}
+\alias{mtx_load_sparse_mtx_n}
+\alias{mtx_save_sparse_mtx_n}
 \title{Sparse Matrix Input/Output}
 \usage{
 mtx_load_sparse_mtx(
@@ -18,6 +20,25 @@ mtx_load_sparse_mtx(
 )
 
 mtx_save_sparse_mtx(mtx, out_dir, mtx_fn, row_fn = NULL, col_fn = NULL)
+
+mtx_load_sparse_mtx_n(
+  in_dir,
+  mtx_fn_list,
+  row_fn = NULL,
+  col_fn = NULL,
+  row_header = FALSE,
+  col_header = FALSE,
+  row_index = 1,
+  col_index = 1
+)
+
+mtx_save_sparse_mtx_n(
+  mtx_list,
+  out_dir,
+  mtx_fn_list,
+  row_fn = NULL,
+  col_fn = NULL
+)
 }
 \arguments{
 \item{in_dir}{A string. Path to the input directory.}
@@ -45,21 +66,37 @@ annotation.}
 \item{mtx}{A matrix. It could be either sparse matrix or regular matrix.}
 
 \item{out_dir}{A string. Path to the output directory.}
+
+\item{mtx_fn_list}{A list of file path to sparse matrices.}
+
+\item{mtx_list}{A list of sparse matrices.}
 }
 \value{
 \itemize{
 \item The \code{mtx_load_sparse_mtx()} returns a sparse matrix of \code{dgCMatrix} class.
 \item The \code{mtx_save_sparse_mtx()} returns Void.
+\item The \code{mtx_load_sparse_mtx_n()} returns a list of sparse matrices of
+\code{dgCMatrix} class.
+\item The \code{mtx_save_sparse_mtx_n()} returns Void.
 }
 }
 \description{
 These functions are aimed to load and save the sparse matrices in
 Matrix Market Format, together with its annotation files.
 }
+\details{
+The \code{mtx_load_sparse_mtx()} and the \code{mtx_save_sparse_mtx()} are aimed to
+read and write single sparse matrix, while the \code{mtx_load_sparse_mtx_n()}
+and the \code{mtx_save_sparse_mtx_n()} are aimed to read and write a list of
+sparse matrices that share row and column annotations.
+}
 \section{Notes}{
 
 The matrix file, row annotation file (if available) and column annotation
 file (if available) should be in the same directory.
+
+When both \code{mtx_list} and \code{mtx_fn_list} are specified, the elements of them
+should be in the same order and have the same names.
 }
 
 \examples{
@@ -68,7 +105,14 @@ rownames(m) <- paste0("x", 1:5)
 colnames(m) <- paste0("y", 1:4)
 \dontrun{
 mtx_save_sparse_mtx(m, "~/test_rrbio", "matrix.mtx", "rows.tsv", "cols.tsv")
-m2 <- mtx_load_sparse_mtx("~/test_rrbio", "matrix.mtx", "rows.tsv", "cols.tsv")}
+m2 <- mtx_load_sparse_mtx("~/test_rrbio", "matrix.mtx", "rows.tsv", "cols.tsv")
+
+mtx_list <- list(mtx1 = m, mtx2 = m2)
+mtx_fn_list <- list(mtx1 = "matrix1.mtx", mtx2 = "matrix2.mtx")
+
+mtx_save_sparse_mtx_n(mtx_list, "~/test_rrbio", mtx_fn_list, "rows.tsv", "cols.tsv")
+mtx_list2 <- mtx_load_sparse_mtx_n("~/test_rrbio", mtx_fn_list, "rows.tsv", "cols.tsv")
+}
 
 }
 \seealso{

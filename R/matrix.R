@@ -132,6 +132,11 @@ mtx_sparse_mtx2df <- function(mtx, row, col, value, full = FALSE) {
 #' These functions are aimed to load and save the sparse matrices in 
 #' Matrix Market Format, together with its annotation files.
 #'
+#' The `mtx_load_sparse_mtx()` and the `mtx_save_sparse_mtx()` are aimed to
+#' read and write single sparse matrix, while the `mtx_load_sparse_mtx_n()`
+#' and the `mtx_save_sparse_mtx_n()` are aimed to read and write a list of
+#' sparse matrices that share row and column annotations.
+
 #' @param mtx A matrix. It could be either sparse matrix or regular matrix.
 #' @param in_dir A string. Path to the input directory.
 #' @param out_dir A string. Path to the output directory.
@@ -148,13 +153,21 @@ mtx_sparse_mtx2df <- function(mtx, row, col, value, full = FALSE) {
 #' @param col_index An integer or a string. The index (integer) or name
 #'   (string) of the column in `col_fn` that stores the matrix column 
 #'   annotation.
+#' @param mtx_list A list of sparse matrices.
+#' @param mtx_fn_list A list of file path to sparse matrices.
 #' @return
 #' * The `mtx_load_sparse_mtx()` returns a sparse matrix of `dgCMatrix` class.
 #' * The `mtx_save_sparse_mtx()` returns Void.
+#' * The `mtx_load_sparse_mtx_n()` returns a list of sparse matrices of 
+#'   `dgCMatrix` class.
+#' * The `mtx_save_sparse_mtx_n()` returns Void.
 #' 
 #' @section Notes:
 #' The matrix file, row annotation file (if available) and column annotation
 #' file (if available) should be in the same directory. 
+#'
+#' When both `mtx_list` and `mtx_fn_list` are specified, the elements of them
+#' should be in the same order and have the same names.
 #'
 #' @seealso \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} and 
 #'   \code{\link[Matrix:dgTMatrix-class]{dgTMatrix}}
@@ -165,7 +178,14 @@ mtx_sparse_mtx2df <- function(mtx, row, col, value, full = FALSE) {
 #' colnames(m) <- paste0("y", 1:4)
 #' \dontrun{
 #' mtx_save_sparse_mtx(m, "~/test_rrbio", "matrix.mtx", "rows.tsv", "cols.tsv")
-#' m2 <- mtx_load_sparse_mtx("~/test_rrbio", "matrix.mtx", "rows.tsv", "cols.tsv")}
+#' m2 <- mtx_load_sparse_mtx("~/test_rrbio", "matrix.mtx", "rows.tsv", "cols.tsv")
+#'
+#' mtx_list <- list(mtx1 = m, mtx2 = m2)
+#' mtx_fn_list <- list(mtx1 = "matrix1.mtx", mtx2 = "matrix2.mtx")
+#'
+#' mtx_save_sparse_mtx_n(mtx_list, "~/test_rrbio", mtx_fn_list, "rows.tsv", "cols.tsv")
+#' mtx_list2 <- mtx_load_sparse_mtx_n("~/test_rrbio", mtx_fn_list, "rows.tsv", "cols.tsv")
+#'}
 #'
 #' @name spmtx-io
 NULL
@@ -176,31 +196,14 @@ NULL
 mtx_load_sparse_mtx <- function(in_dir, mtx_fn, row_fn = NULL, col_fn = NULL,
                                 row_header = FALSE, col_header = FALSE,
                                 row_index = 1, col_index = 1) {
-  os_assert_e(in_dir)
-
-  mtx_fpath <- os_join_path(in_dir, mtx_fn)
-  os_assert_e(mtx_fpath)
-  mtx <- Matrix::readMM(mtx_fpath)
-
-  if (! is.null(row_fn)) {
-    row_fpath <- os_join_path(in_dir, row_fn)
-    os_assert_e(row_fpath)
-    row_anno <- read.delim(row_fpath, header = row_header, 
-                           stringsAsFactors = FALSE)
-    row_names <- row_anno[, row_index]  # it is safe for dataframe, but not for tibble.
-    rownames(mtx) <- row_names
-  }
-
-  if (! is.null(col_fn)) {
-    col_fpath <- os_join_path(in_dir, col_fn)
-    os_assert_e(col_fpath)
-    col_anno <- read.delim(col_fpath, header = col_header, 
-                           stringsAsFactors = FALSE)
-    col_names <- col_anno[, col_index]
-    colnames(mtx) <- col_names
-  }
-
-  mtx <- methods::as(mtx, "dgCMatrix")
+  mtx_fn_list <- list(mtx1 = mtx_fn)
+  res <- mtx_load_sparse_mtx_n(in_dir = in_dir, mtx_fn_list = mtx_fn_list, 
+                               row_fn = row_fn, col_fn = col_fn,
+                               row_header = row_header, col_header = col_header,
+                               row_index = row_index, col_index = col_index)
+  if (length(res) != 1)
+    stop("number of returned matrices should be 1.")
+  mtx <- res[[1]]
   return(mtx)
 }
 
@@ -208,14 +211,91 @@ mtx_load_sparse_mtx <- function(in_dir, mtx_fn, row_fn = NULL, col_fn = NULL,
 #' @export
 #' @rdname spmtx-io
 mtx_save_sparse_mtx <- function(mtx, out_dir, mtx_fn, row_fn = NULL, col_fn = NULL) {
-  os_safe_mkdir(out_dir, recursive = TRUE)
+  mtx_list <- list(mtx1 = mtx)
+  mtx_fn_list <- list(mtx1 = mtx_fn)
+  mtx_save_sparse_mtx_n(mtx_list = mtx_list, out_dir = out_dir, 
+                        mtx_fn_list = mtx_fn_list, 
+                        row_fn = row_fn, col_fn = col_fn)
+}
 
-  if (! any(class(mtx) %in% c("dgCMatrix", "dgTMatrix"))) {
-    mtx <- methods::as(mtx, "dgTMatrix")
+
+#' @export
+#' @rdname spmtx-io
+mtx_load_sparse_mtx_n <- function(in_dir, mtx_fn_list, row_fn = NULL, col_fn = NULL,
+                                  row_header = FALSE, col_header = FALSE,
+                                  row_index = 1, col_index = 1) {
+  os_assert_e(in_dir)
+
+  if (length(mtx_fn_list) <= 0)
+    return(list())
+
+  row_names <- NULL
+  if (! is.null(row_fn)) {
+    row_fpath <- os_join_path(in_dir, row_fn)
+    os_assert_e(row_fpath)
+    row_anno <- read.delim(row_fpath, header = row_header, 
+                           stringsAsFactors = FALSE)
+    row_names <- row_anno[, row_index]  # it is safe for dataframe, but not for tibble.
   }
 
-  mtx_fpath <- os_join_path(out_dir, mtx_fn)
-  Matrix::writeMM(mtx, mtx_fpath)
+  col_names <- NULL
+  if (! is.null(col_fn)) {
+    col_fpath <- os_join_path(in_dir, col_fn)
+    os_assert_e(col_fpath)
+    col_anno <- read.delim(col_fpath, header = col_header, 
+                           stringsAsFactors = FALSE)
+    col_names <- col_anno[, col_index]
+  }
+
+  if (is.null(names(mtx_fn_list)))
+    names(mtx_fn_list) <- paste0("mtx", 1:length(mtx_fn_list))
+
+  res <- list()
+  for (mtx_name in names(mtx_fn_list)) {
+    mtx_fn <- mtx_fn_list[[mtx_name]]
+    mtx_fpath <- os_join_path(in_dir, mtx_fn)
+    os_assert_e(mtx_fpath)
+    mtx <- Matrix::readMM(mtx_fpath)
+  
+    rownames(mtx) <- row_names
+    colnames(mtx) <- col_names
+  
+    mtx <- methods::as(mtx, "dgCMatrix")
+    res[[mtx_name]] <- mtx
+  }
+
+  return(res)
+}
+
+
+#' @export
+#' @rdname spmtx-io
+mtx_save_sparse_mtx_n <- function(mtx_list, out_dir, mtx_fn_list, row_fn = NULL, col_fn = NULL) {
+  os_safe_mkdir(out_dir, recursive = TRUE)
+
+  if (is.null(names(mtx_list)))
+    names(mtx_list) <- paste0("mtx", 1:length(mtx_list))
+  if (is.null(names(mtx_fn_list)))
+    names(mtx_fn_list) <- paste0("mtx", 1:length(mtx_fn_list))
+
+  mtx_names1 <- names(mtx_list)
+  mtx_names2 <- names(mtx_fn_list)
+  if (length(mtx_names1) != length(mtx_names2))
+    stop("length of mtx_list and mtx_fn_list should be the same.")
+  if (! all(sort(mtx_names1) == sort(mtx_names2)))
+    stop("names of mtx_list and mtx_fn_list should be the same.")
+
+  for (mtx_name in mtx_names1) {
+    mtx <- mtx_list[[mtx_name]]
+    mtx_fn <- mtx_fn_list[[mtx_name]]
+
+    if (! any(class(mtx) %in% c("dgCMatrix", "dgTMatrix"))) {
+      mtx <- methods::as(mtx, "dgTMatrix")
+    }
+
+    mtx_fpath <- os_join_path(out_dir, mtx_fn)
+    Matrix::writeMM(mtx, mtx_fpath)
+  }
 
   if (! is.null(row_fn)) {
     row_fpath <- os_join_path(out_dir, row_fn)
