@@ -156,10 +156,19 @@ mtx_sparse_mtx2df <- function(mtx, row, col, value, full = FALSE) {
 #' @param mtx_list A list of sparse matrices.
 #' @param mtx_fn_list A list of file path to sparse matrices.
 #' @return
-#' * The `mtx_load_sparse_mtx()` returns a sparse matrix of `dgCMatrix` class.
+#' * The `mtx_load_sparse_mtx()` returns a list of three elements:
+#'   (1) `mtx`: a sparse matrix of `dgCMatrix` class;
+#'   (2) `row_anno`: a dataframe of row annotation if provided, otherwise 
+#'   `NULL`;
+#'   (3) `col_anno`: a dataframe of column annotation if provided, otherwise
+#'   `NULL`.
 #' * The `mtx_save_sparse_mtx()` returns Void.
-#' * The `mtx_load_sparse_mtx_n()` returns a list of sparse matrices of 
-#'   `dgCMatrix` class.
+#' * The `mtx_load_sparse_mtx_n()` returns a list of three elements:
+#'   (1) `mtx`: a list of sparse matrices of `dgCMatrix` class;
+#'   (2) `row_anno`: a dataframe of row annotation if provided, otherwise 
+#'   `NULL`;
+#'   (3) `col_anno`: a dataframe of column annotation if provided, otherwise
+#'   `NULL`.
 #' * The `mtx_save_sparse_mtx_n()` returns Void.
 #' 
 #' @section Notes:
@@ -167,7 +176,7 @@ mtx_sparse_mtx2df <- function(mtx, row, col, value, full = FALSE) {
 #' file (if available) should be in the same directory. 
 #'
 #' When both `mtx_list` and `mtx_fn_list` are specified, the elements of them
-#' should be in the same order and have the same names.
+#' should be in the same order and have the same names (if available).
 #'
 #' @seealso \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} and 
 #'   \code{\link[Matrix:dgTMatrix-class]{dgTMatrix}}
@@ -178,14 +187,16 @@ mtx_sparse_mtx2df <- function(mtx, row, col, value, full = FALSE) {
 #' colnames(m) <- paste0("y", 1:4)
 #' \dontrun{
 #' mtx_save_sparse_mtx(m, "~/test_rrbio", "matrix.mtx", "rows.tsv", "cols.tsv")
-#' m2 <- mtx_load_sparse_mtx("~/test_rrbio", "matrix.mtx", "rows.tsv", "cols.tsv")
+#' res <- mtx_load_sparse_mtx("~/test_rrbio", "matrix.mtx", "rows.tsv", "cols.tsv")
+#' m2 <- res[["mtx"]]
 #'
 #' mtx_list <- list(mtx1 = m, mtx2 = m2)
 #' mtx_fn_list <- list(mtx1 = "matrix1.mtx", mtx2 = "matrix2.mtx")
 #'
 #' mtx_save_sparse_mtx_n(mtx_list, "~/test_rrbio", mtx_fn_list, "rows.tsv", "cols.tsv")
-#' mtx_list2 <- mtx_load_sparse_mtx_n("~/test_rrbio", mtx_fn_list, "rows.tsv", "cols.tsv")
-#'}
+#' res2 <- mtx_load_sparse_mtx_n("~/test_rrbio", mtx_fn_list, "rows.tsv", "cols.tsv")
+#' mtx_list2 <- res2[["mtx"]]
+#' }
 #'
 #' @name spmtx-io
 NULL
@@ -197,14 +208,21 @@ mtx_load_sparse_mtx <- function(in_dir, mtx_fn, row_fn = NULL, col_fn = NULL,
                                 row_header = FALSE, col_header = FALSE,
                                 row_index = 1, col_index = 1) {
   mtx_fn_list <- list(mtx1 = mtx_fn)
-  res <- mtx_load_sparse_mtx_n(in_dir = in_dir, mtx_fn_list = mtx_fn_list, 
-                               row_fn = row_fn, col_fn = col_fn,
-                               row_header = row_header, col_header = col_header,
-                               row_index = row_index, col_index = col_index)
-  if (length(res) != 1)
+  res_all <- mtx_load_sparse_mtx_n(
+                 in_dir = in_dir, mtx_fn_list = mtx_fn_list, 
+                 row_fn = row_fn, col_fn = col_fn,
+                 row_header = row_header, col_header = col_header,
+                 row_index = row_index, col_index = col_index)
+
+  if (length(res_all[["mtx"]]) != 1)
     stop("number of returned matrices should be 1.")
-  mtx <- res[[1]]
-  return(mtx)
+
+  res <- list(
+    mtx = res_all[["mtx"]][[1]],
+    row_anno = res_all[["row_anno"]],
+    col_anno = res_all[["col_anno"]]
+  )
+  return(res)
 }
 
 
@@ -229,12 +247,19 @@ mtx_load_sparse_mtx_n <- function(in_dir, mtx_fn_list, row_fn = NULL, col_fn = N
   if (length(mtx_fn_list) <= 0)
     return(list())
 
+  res <- list(
+    mtx = list(),
+    row_anno = NULL,
+    col_anno = NULL
+  )
+
   row_names <- NULL
   if (! is.null(row_fn)) {
     row_fpath <- os_join_path(in_dir, row_fn)
     os_assert_e(row_fpath)
     row_anno <- read.delim(row_fpath, header = row_header, 
                            stringsAsFactors = FALSE)
+    res[["row_anno"]] <- row_anno
     row_names <- row_anno[, row_index]  # it is safe for dataframe, but not for tibble.
   }
 
@@ -244,13 +269,13 @@ mtx_load_sparse_mtx_n <- function(in_dir, mtx_fn_list, row_fn = NULL, col_fn = N
     os_assert_e(col_fpath)
     col_anno <- read.delim(col_fpath, header = col_header, 
                            stringsAsFactors = FALSE)
+    res[["col_anno"]] <- col_anno
     col_names <- col_anno[, col_index]
   }
 
   if (is.null(names(mtx_fn_list)))
     names(mtx_fn_list) <- paste0("mtx", 1:length(mtx_fn_list))
 
-  res <- list()
   for (mtx_name in names(mtx_fn_list)) {
     mtx_fn <- mtx_fn_list[[mtx_name]]
     mtx_fpath <- os_join_path(in_dir, mtx_fn)
@@ -261,7 +286,7 @@ mtx_load_sparse_mtx_n <- function(in_dir, mtx_fn_list, row_fn = NULL, col_fn = N
     colnames(mtx) <- col_names
   
     mtx <- methods::as(mtx, "dgCMatrix")
-    res[[mtx_name]] <- mtx
+    res[["mtx"]][[mtx_name]] <- mtx
   }
 
   return(res)

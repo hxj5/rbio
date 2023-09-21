@@ -73,10 +73,19 @@ annotation.}
 }
 \value{
 \itemize{
-\item The \code{mtx_load_sparse_mtx()} returns a sparse matrix of \code{dgCMatrix} class.
+\item The \code{mtx_load_sparse_mtx()} returns a list of three elements:
+(1) \code{mtx}: a sparse matrix of \code{dgCMatrix} class;
+(2) \code{row_anno}: a dataframe of row annotation if provided, otherwise
+\code{NULL};
+(3) \code{col_anno}: a dataframe of column annotation if provided, otherwise
+\code{NULL}.
 \item The \code{mtx_save_sparse_mtx()} returns Void.
-\item The \code{mtx_load_sparse_mtx_n()} returns a list of sparse matrices of
-\code{dgCMatrix} class.
+\item The \code{mtx_load_sparse_mtx_n()} returns a list of three elements:
+(1) \code{mtx}: a list of sparse matrices of \code{dgCMatrix} class;
+(2) \code{row_anno}: a dataframe of row annotation if provided, otherwise
+\code{NULL};
+(3) \code{col_anno}: a dataframe of column annotation if provided, otherwise
+\code{NULL}.
 \item The \code{mtx_save_sparse_mtx_n()} returns Void.
 }
 }
@@ -96,7 +105,7 @@ The matrix file, row annotation file (if available) and column annotation
 file (if available) should be in the same directory.
 
 When both \code{mtx_list} and \code{mtx_fn_list} are specified, the elements of them
-should be in the same order and have the same names.
+should be in the same order and have the same names (if available).
 }
 
 \examples{
@@ -105,13 +114,15 @@ rownames(m) <- paste0("x", 1:5)
 colnames(m) <- paste0("y", 1:4)
 \dontrun{
 mtx_save_sparse_mtx(m, "~/test_rrbio", "matrix.mtx", "rows.tsv", "cols.tsv")
-m2 <- mtx_load_sparse_mtx("~/test_rrbio", "matrix.mtx", "rows.tsv", "cols.tsv")
+res <- mtx_load_sparse_mtx("~/test_rrbio", "matrix.mtx", "rows.tsv", "cols.tsv")
+m2 <- res[["mtx"]]
 
 mtx_list <- list(mtx1 = m, mtx2 = m2)
 mtx_fn_list <- list(mtx1 = "matrix1.mtx", mtx2 = "matrix2.mtx")
 
 mtx_save_sparse_mtx_n(mtx_list, "~/test_rrbio", mtx_fn_list, "rows.tsv", "cols.tsv")
-mtx_list2 <- mtx_load_sparse_mtx_n("~/test_rrbio", mtx_fn_list, "rows.tsv", "cols.tsv")
+res2 <- mtx_load_sparse_mtx_n("~/test_rrbio", mtx_fn_list, "rows.tsv", "cols.tsv")
+mtx_list2 <- res2[["mtx"]]
 }
 
 }
