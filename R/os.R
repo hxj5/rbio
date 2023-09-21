@@ -65,7 +65,7 @@ os_join_path <- function(path1, path2) {
 #'
 #' @export
 #' @examples
-#' os_safe_mkdir("~/debug/test1/test2")
+#' \dontrun{os_safe_mkdir("~/debug/test1/test2")}
 os_safe_mkdir <- function(dir, recursive = TRUE) {
   if (! dir.exists(dir))
     dir.create(dir, recursive = recursive)

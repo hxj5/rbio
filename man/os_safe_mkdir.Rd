@@ -18,5 +18,5 @@ Void.
 This function is aimed to create a directory if it does not exist.
 }
 \examples{
-os_safe_mkdir("~/debug/test1/test2")
+\dontrun{os_safe_mkdir("~/debug/test1/test2")}
 }

@@ -60,8 +60,9 @@ corresponding annotation file.
 m <- matrix(rpois(20, 1), nrow = 5)
 rownames(m) <- paste0("x", 1:5)
 colnames(m) <- paste0("y", 1:4)
+\dontrun{
 mtx_save_sparse_mtx(m, "~/test_rrbio", "matrix.mtx", "rows.tsv", "cols.tsv")
-m2 <- mtx_load_sparse_mtx("~/test_rrbio", "matrix.mtx", "rows.tsv", "cols.tsv")
+m2 <- mtx_load_sparse_mtx("~/test_rrbio", "matrix.mtx", "rows.tsv", "cols.tsv")}
 
 }
 \seealso{
