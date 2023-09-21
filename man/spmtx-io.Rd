@@ -47,10 +47,10 @@ mtx_save_sparse_mtx_n(
 Matrix Market Format.}
 
 \item{row_fn}{A string. Path to the file storing the annotation of matrix
-rows. Setting to NULL if there is no such annotation.}
+rows. Setting to \code{NULL} if there is no such annotation.}
 
 \item{col_fn}{A string. Path to the file storing the annotation of matrix
-columns. Setting to NULL if there is no such annotation.}
+columns. Setting to \code{NULL} if there is no such annotation.}
 
 \item{row_header}{A bool. Whether \code{row_fn} has header.}
 

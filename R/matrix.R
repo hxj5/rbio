@@ -143,9 +143,9 @@ mtx_sparse_mtx2df <- function(mtx, row, col, value, full = FALSE) {
 #' @param mtx_fn A string. Path to the file storing the sparse matrix, in
 #'   Matrix Market Format.
 #' @param row_fn A string. Path to the file storing the annotation of matrix
-#'   rows. Setting to NULL if there is no such annotation.
+#'   rows. Setting to `NULL` if there is no such annotation.
 #' @param col_fn A string. Path to the file storing the annotation of matrix
-#'   columns. Setting to NULL if there is no such annotation.
+#'   columns. Setting to `NULL` if there is no such annotation.
 #' @param row_header A bool. Whether `row_fn` has header.
 #' @param col_header A bool. Whether `col_fn` has header.
 #' @param row_index An integer or a string. The index (integer) or name
