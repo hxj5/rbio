@@ -12,7 +12,9 @@ mtx_load_sparse_mtx(
   row_fn = NULL,
   col_fn = NULL,
   row_header = FALSE,
-  col_header = FALSE
+  col_header = FALSE,
+  row_index = 1,
+  col_index = 1
 )
 
 mtx_save_sparse_mtx(mtx, out_dir, mtx_fn, row_fn = NULL, col_fn = NULL)
@@ -29,9 +31,16 @@ rows. Setting to NULL if there is no such annotation.}
 \item{col_fn}{A string. Path to the file storing the annotation of matrix
 columns. Setting to NULL if there is no such annotation.}
 
-\item{row_header}{A bool. Whether the row annotation file has header.}
+\item{row_header}{A bool. Whether \code{row_fn} has header.}
 
-\item{col_header}{A bool. Whether the column annotation file has header.}
+\item{col_header}{A bool. Whether \code{col_fn} has header.}
+
+\item{row_index}{An integer or a string. The index (integer) or name
+(string) of the column in \code{row_fn} that stores the matrix row annotation.}
+
+\item{col_index}{An integer or a string. The index (integer) or name
+(string) of the column in \code{col_fn} that stores the matrix column
+annotation.}
 
 \item{mtx}{A matrix. It could be either sparse matrix or regular matrix.}
 
@@ -51,9 +60,6 @@ Matrix Market Format, together with its annotation files.
 
 The matrix file, row annotation file (if available) and column annotation
 file (if available) should be in the same directory.
-
-The row and column names of the matrix should be the first column of the
-corresponding annotation file.
 }
 
 \examples{

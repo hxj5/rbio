@@ -141,8 +141,13 @@ mtx_sparse_mtx2df <- function(mtx, row, col, value, full = FALSE) {
 #'   rows. Setting to NULL if there is no such annotation.
 #' @param col_fn A string. Path to the file storing the annotation of matrix
 #'   columns. Setting to NULL if there is no such annotation.
-#' @param row_header A bool. Whether the row annotation file has header.
-#' @param col_header A bool. Whether the column annotation file has header.
+#' @param row_header A bool. Whether `row_fn` has header.
+#' @param col_header A bool. Whether `col_fn` has header.
+#' @param row_index An integer or a string. The index (integer) or name
+#'   (string) of the column in `row_fn` that stores the matrix row annotation.
+#' @param col_index An integer or a string. The index (integer) or name
+#'   (string) of the column in `col_fn` that stores the matrix column 
+#'   annotation.
 #' @return
 #' * The `mtx_load_sparse_mtx()` returns a sparse matrix of `dgCMatrix` class.
 #' * The `mtx_save_sparse_mtx()` returns Void.
@@ -150,9 +155,6 @@ mtx_sparse_mtx2df <- function(mtx, row, col, value, full = FALSE) {
 #' @section Notes:
 #' The matrix file, row annotation file (if available) and column annotation
 #' file (if available) should be in the same directory. 
-#'
-#' The row and column names of the matrix should be the first column of the
-#' corresponding annotation file.
 #'
 #' @seealso \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} and 
 #'   \code{\link[Matrix:dgTMatrix-class]{dgTMatrix}}
@@ -172,7 +174,8 @@ NULL
 #' @export
 #' @rdname spmtx-io
 mtx_load_sparse_mtx <- function(in_dir, mtx_fn, row_fn = NULL, col_fn = NULL,
-                                row_header = FALSE, col_header = FALSE) {
+                                row_header = FALSE, col_header = FALSE,
+                                row_index = 1, col_index = 1) {
   os_assert_e(in_dir)
 
   mtx_fpath <- os_join_path(in_dir, mtx_fn)
@@ -184,7 +187,7 @@ mtx_load_sparse_mtx <- function(in_dir, mtx_fn, row_fn = NULL, col_fn = NULL,
     os_assert_e(row_fpath)
     row_anno <- read.delim(row_fpath, header = row_header, 
                            stringsAsFactors = FALSE)
-    row_names <- row_anno[, 1]  # it is safe for dataframe, but not for tibble.
+    row_names <- row_anno[, row_index]  # it is safe for dataframe, but not for tibble.
     rownames(mtx) <- row_names
   }
 
@@ -193,7 +196,7 @@ mtx_load_sparse_mtx <- function(in_dir, mtx_fn, row_fn = NULL, col_fn = NULL,
     os_assert_e(col_fpath)
     col_anno <- read.delim(col_fpath, header = col_header, 
                            stringsAsFactors = FALSE)
-    col_names <- col_anno[, 1]  
+    col_names <- col_anno[, col_index]
     colnames(mtx) <- col_names
   }
 
