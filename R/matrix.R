@@ -206,7 +206,8 @@ NULL
 #' @rdname spmtx-io
 mtx_load_sparse_mtx <- function(in_dir, mtx_fn, row_fn = NULL, col_fn = NULL,
                                 row_header = FALSE, col_header = FALSE,
-                                row_index = 1, col_index = 1) {
+                                row_index = 1, col_index = 1)
+{
   mtx_fn_list <- list(mtx1 = mtx_fn)
   res_all <- mtx_load_sparse_mtx_n(
                  in_dir = in_dir, mtx_fn_list = mtx_fn_list, 
@@ -228,7 +229,9 @@ mtx_load_sparse_mtx <- function(in_dir, mtx_fn, row_fn = NULL, col_fn = NULL,
 
 #' @export
 #' @rdname spmtx-io
-mtx_save_sparse_mtx <- function(mtx, out_dir, mtx_fn, row_fn = NULL, col_fn = NULL) {
+mtx_save_sparse_mtx <- function(mtx, out_dir, mtx_fn, 
+                                row_fn = NULL, col_fn = NULL)
+{
   mtx_list <- list(mtx1 = mtx)
   mtx_fn_list <- list(mtx1 = mtx_fn)
   mtx_save_sparse_mtx_n(mtx_list = mtx_list, out_dir = out_dir, 
@@ -239,9 +242,11 @@ mtx_save_sparse_mtx <- function(mtx, out_dir, mtx_fn, row_fn = NULL, col_fn = NU
 
 #' @export
 #' @rdname spmtx-io
-mtx_load_sparse_mtx_n <- function(in_dir, mtx_fn_list, row_fn = NULL, col_fn = NULL,
+mtx_load_sparse_mtx_n <- function(in_dir, mtx_fn_list, 
+                                  row_fn = NULL, col_fn = NULL,
                                   row_header = FALSE, col_header = FALSE,
-                                  row_index = 1, col_index = 1) {
+                                  row_index = 1, col_index = 1)
+{
   os_assert_e(in_dir)
 
   if (length(mtx_fn_list) <= 0)
@@ -278,8 +283,16 @@ mtx_load_sparse_mtx_n <- function(in_dir, mtx_fn_list, row_fn = NULL, col_fn = N
 
   for (mtx_name in names(mtx_fn_list)) {
     mtx_fn <- mtx_fn_list[[mtx_name]]
+
+    if (is.null(mtx_fn)) {
+      warning(sprintf("matrix file of '%s' is NULL. skip.", mtx_name))
+      res[["mtx"]][[mtx_name]] <- NULL
+      next
+    }
+
     mtx_fpath <- os_join_path(in_dir, mtx_fn)
     os_assert_e(mtx_fpath)
+
     mtx <- Matrix::readMM(mtx_fpath)
   
     rownames(mtx) <- row_names
@@ -295,8 +308,12 @@ mtx_load_sparse_mtx_n <- function(in_dir, mtx_fn_list, row_fn = NULL, col_fn = N
 
 #' @export
 #' @rdname spmtx-io
-mtx_save_sparse_mtx_n <- function(mtx_list, out_dir, mtx_fn_list, row_fn = NULL, col_fn = NULL) {
+mtx_save_sparse_mtx_n <- function(mtx_list, out_dir, mtx_fn_list, 
+                                  row_fn = NULL, col_fn = NULL)
+{
   os_safe_mkdir(out_dir, recursive = TRUE)
+
+  # check whether mtx_list and mtx_fn_list have matched names.
 
   if (is.null(names(mtx_list)))
     names(mtx_list) <- paste0("mtx", 1:length(mtx_list))
@@ -305,14 +322,53 @@ mtx_save_sparse_mtx_n <- function(mtx_list, out_dir, mtx_fn_list, row_fn = NULL,
 
   mtx_names1 <- names(mtx_list)
   mtx_names2 <- names(mtx_fn_list)
+
   if (length(mtx_names1) != length(mtx_names2))
     stop("length of mtx_list and mtx_fn_list should be the same.")
   if (! all(sort(mtx_names1) == sort(mtx_names2)))
     stop("names of mtx_list and mtx_fn_list should be the same.")
 
+  # check whether the matrices have the same row & column annotations.
+
+  row_names <- NULL
+  col_names <- NULL
+  n_row <- NULL
+  n_col <- NULL
+  found_valid_mtx <- FALSE
+
+  for (mtx_name in mtx_names1) {
+    mtx <- mtx_list[[mtx_name]]
+    if (is.null(mtx))
+      next
+
+    if (found_valid_mtx) {
+      if (nrow(mtx) != n_row || ncol(mtx) != n_col)
+        stop(sprintf("dim of matrix '%s' is different from others.", mtx_name))
+
+      if (! base::identical(rownames(mtx), row_names))
+        stop(sprintf("rownames of matrix '%s' are different from others.", mtx_name))
+
+      if (! base::identical(colnames(mtx), col_names))
+        stop(sprintf("colnames of matrix '%s' are different from others.", mtx_name))
+    } else {
+      found_valid_mtx <- TRUE
+      n_row <- nrow(mtx)
+      n_col <- ncol(mtx)
+      row_names <- rownames(mtx)
+      col_names <- colnames(mtx)
+    }
+  }
+
+  # output matrices and annotations
+
   for (mtx_name in mtx_names1) {
     mtx <- mtx_list[[mtx_name]]
     mtx_fn <- mtx_fn_list[[mtx_name]]
+
+    if (is.null(mtx) || is.null(mtx_fn)) {
+      warning(sprintf("matrix or matrix file of '%s' is NULL. skip.", mtx_name))
+      next
+    }
 
     if (! any(class(mtx) %in% c("dgCMatrix", "dgTMatrix"))) {
       mtx <- methods::as(mtx, "dgTMatrix")
@@ -324,12 +380,16 @@ mtx_save_sparse_mtx_n <- function(mtx_list, out_dir, mtx_fn_list, row_fn = NULL,
 
   if (! is.null(row_fn)) {
     row_fpath <- os_join_path(out_dir, row_fn)
-    write(rownames(mtx), row_fpath, sep = "\n")
+    if (is.null(row_names))
+        row_names <- c()
+    write(row_names, row_fpath, sep = "\n")
   }
 
   if (! is.null(col_fn)) {
     col_fpath <- os_join_path(out_dir, col_fn)
-    write(colnames(mtx), col_fpath, sep = "\n")
+    if (is.null(col_names))
+        col_names <- c()
+    write(col_names, col_fpath, sep = "\n")
   }
 }
 
