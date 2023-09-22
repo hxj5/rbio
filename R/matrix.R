@@ -1,6 +1,23 @@
 # matrix.R - (sparse) matrix routine
 
 
+#' Convert a Matrix to Sparse Matrix of dgCMatrix Class
+#' Notes: it seems sparse matrix of many classes can be successfully converted
+#'   to `dgTMatrix` while fail to be converted to `dgCMatrix` directly.
+#'   Therefore, x -> dgTMatrix -> dgCMatrix could be safer for format
+#'   conversion.
+#' @keywords internal
+mtx_mtx2dgCMatrix <- function(x) {
+  y <- NULL
+  if ("ngTMatrix" %in% class(x)) {
+    y <- x * 1
+  } else {    # TODO: use tryCatch
+    y <- methods::as(x, "dgCMatrix")
+  }
+  return(y)
+}
+
+
 #' DataFrame and Matrix Conversion
 #'
 #' The conversion between long-format dataframe and (sparse) matrix.
@@ -84,7 +101,7 @@ mtx_df2mtx <- function(df, row, col, value, na.values = 0) {
 mtx_df2sparse_mtx <- function(df, row, col, value, na.values = 0) {
   mtx <- mtx_df2mtx(df, row = row, col = col, value = value, 
                     na.values = na.values)
-  mtx_s <- methods::as(mtx, "dgCMatrix")
+  mtx_s <- mtx_mtx2dgCMatrix(mtx)
   return(mtx_s)
 }
 
@@ -301,7 +318,7 @@ mtx_load_sparse_mtx_n <- function(in_dir, mtx_fn_list,
     rownames(mtx) <- row_names
     colnames(mtx) <- col_names
   
-    mtx <- methods::as(mtx, "dgCMatrix")
+    mtx <- mtx_mtx2dgCMatrix(mtx)
     res[["mtx"]][[mtx_name]] <- mtx
   }
 
