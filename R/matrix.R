@@ -7,6 +7,7 @@
 #'   Therefore, x -> dgTMatrix -> dgCMatrix could be safer for format
 #'   conversion.
 #' @keywords internal
+#' @noRd
 mtx_mtx2dgCMatrix <- function(x) {
   y <- NULL
   if ("ngTMatrix" %in% class(x)) {
