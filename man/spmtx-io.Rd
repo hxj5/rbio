@@ -109,14 +109,17 @@ should be in the same order and have the same names (if available).
 }
 
 \examples{
+\dontrun{
 m <- matrix(rpois(20, 1), nrow = 5)
 rownames(m) <- paste0("x", 1:5)
 colnames(m) <- paste0("y", 1:4)
-\dontrun{
+
+# read and write single matrix
 mtx_save_sparse_mtx(m, "~/test_rrbio", "matrix.mtx", "rows.tsv", "cols.tsv")
 res <- mtx_load_sparse_mtx("~/test_rrbio", "matrix.mtx", "rows.tsv", "cols.tsv")
 m2 <- res[["mtx"]]
 
+# read and write a list of matrices
 mtx_list <- list(mtx1 = m, mtx2 = m2)
 mtx_fn_list <- list(mtx1 = "matrix1.mtx", mtx2 = "matrix2.mtx")
 
