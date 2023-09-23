@@ -82,13 +82,11 @@ pkg_install <- function(pkgs, ..., lib = NULL,
     if (length(pkgs_old) > 0) {
       base::message(
         sprintf("[ins-%d] %d packages have already been installed.",
-                n_try, length(pkgs_old))
-      )
+                n_try, length(pkgs_old)))
       if (verbose)
         base::message(
           sprintf("[ins-%d] these packages are: %s.", 
-                  n_try, paste(pkgs_old, collapse = ", "))
-        )
+                  n_try, paste(pkgs_old, collapse = ", ")))
     }
 
     # check packages that have not been installed
@@ -96,17 +94,14 @@ pkg_install <- function(pkgs, ..., lib = NULL,
     if (length(pkgs_new) > 0) {
       base::message(
         sprintf("[ins-%d] %d packages are to be installed.", 
-                n_try, length(pkgs_new))
-      )
+                n_try, length(pkgs_new)))
       if (verbose)
         base::message(
           sprintf("[ins-%d] these packages are: %s.", 
-                  n_try, paste(pkgs_new, collapse = ", "))
-        )
+                  n_try, paste(pkgs_new, collapse = ", ")))
     } else {
       base::message(
-        sprintf("[ins-%d] all packages have been installed.", n_try)
-      )
+        sprintf("[ins-%d] all packages have been installed.", n_try))
       break
     }
   
@@ -121,8 +116,7 @@ pkg_install <- function(pkgs, ..., lib = NULL,
   n_new <- length(pkgs_new)
   base::message(
     sprintf("summary: in total %d packages succeeded; %d packages failed.",
-            length(pkgs_uniq) - n_new, n_new)
-  )
+            length(pkgs_uniq) - n_new, n_new))
   if (n_new > 0) {
     base::message("packages failed to be installed:")
     base::message(paste(pkgs_new, collapse = ", "))
