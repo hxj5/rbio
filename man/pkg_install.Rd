@@ -51,9 +51,9 @@ unless \code{ask = FALSE}).}
 A vector of names of packages whose installation failed.
 }
 \description{
-This function is a wrapper of BiocManager::install(), allowing several
+This function is a wrapper of \code{BiocManager::install()}, allowing several
 rounds of installation in case of errors during installation. Note that
-BiocManager::install() can also install CRAN and GitHub packages, in
+\code{BiocManager::install()} can also install CRAN and GitHub packages, in
 addition to Bioconductor packages.
 }
 \section{Notes}{

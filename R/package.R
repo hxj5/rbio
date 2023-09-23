@@ -29,9 +29,9 @@ pkg_install_core <- function(pkgs, args, lib,
 
 #' Package Installation
 #'
-#' This function is a wrapper of BiocManager::install(), allowing several
+#' This function is a wrapper of `BiocManager::install()`, allowing several
 #' rounds of installation in case of errors during installation. Note that
-#' BiocManager::install() can also install CRAN and GitHub packages, in 
+#' `BiocManager::install()` can also install CRAN and GitHub packages, in 
 #' addition to Bioconductor packages.
 #'
 #' @inheritParams BiocManager::install
