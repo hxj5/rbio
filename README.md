@@ -13,7 +13,8 @@ devtools::install_github("hxj5/rrbio")
 
 Please try restarting your R session (e.g. call `.rs.restartR()` if in RStudio),
 if you encounter the error "**lazy-load database is corrupt**" after installing
-the package with `devtools`. See more discussion at the 
+the package with `devtools`. It should be a base R problem. 
+See more discussion at the 
 [stackoverflow thread](https://stackoverflow.com/questions/30424608/error-in-fetchkey-lazy-load-database)
 or issue [419](https://github.com/r-lib/devtools/issues/419) & 
 [1001](https://github.com/r-lib/devtools/pull/1001) of the "devtools" project.
