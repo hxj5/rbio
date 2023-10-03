@@ -21,5 +21,6 @@ Imports:
     dplyr,
     magrittr,
     methods,
+    stats,
     tidyr,
     utils

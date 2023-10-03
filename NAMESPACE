@@ -2,6 +2,7 @@
 
 export(io_ffprint)
 export(io_write_tsv)
+export(merge_adjacent_regions)
 export(mtx_df2mtx)
 export(mtx_df2sparse_mtx)
 export(mtx_load_sparse_mtx)
