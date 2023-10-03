@@ -4,7 +4,7 @@
 #' Merge Adjacent Regions of Single Group
 #' @keywords internal
 #' @noRd
-merge_adjacent_regions1 <- function(df, chrom, start, end, value, 
+reg_merge_adjacent_regions1 <- function(df, chrom, start, end, value, 
                                     max_gap = 0, na.rm = TRUE)
 {
   if (! chrom %in% colnames(df))
@@ -111,15 +111,15 @@ merge_adjacent_regions1 <- function(df, chrom, start, end, value,
 #'   end = c(100, 200, 300, 200, 300),
 #'   value = c(1, 1, 2, 2, 3)
 #' )
-#' merge_adjacent_regions(df, "chrom", "begin", "end", "value")
+#' reg_merge_adjacent_regions(df, "chrom", "begin", "end", "value")
 #'
 #' # more than one groups
 #' tmp1 <- tmp2 <- df
 #' tmp1$group <- "g1"
 #' tmp2$group <- "g2"
 #' df2 <- rbind(tmp1, tmp2)
-#' merge_adjacent_regions(df2, "chrom", "begin", "end", "value", "group")
-merge_adjacent_regions <- function(df, chrom, start, end, value, 
+#' reg_merge_adjacent_regions(df2, "chrom", "begin", "end", "value", "group")
+reg_merge_adjacent_regions <- function(df, chrom, start, end, value, 
                                    group = NULL, max_gap = 0, na.rm = TRUE)
 {
   if (! chrom %in% colnames(df))
@@ -152,7 +152,7 @@ merge_adjacent_regions <- function(df, chrom, start, end, value,
   }
     
   if (is.null(group)) {
-    df_new <- merge_adjacent_regions1(
+    df_new <- reg_merge_adjacent_regions1(
       df = df,
       chrom = "chrom", start = "start", end = "end", value = "value",
       max_gap = max_gap,
@@ -163,7 +163,7 @@ merge_adjacent_regions <- function(df, chrom, start, end, value,
     df_new <- NULL
     for (g in base::unique(df$group)) {
       df_group <- df[df$group == g, ]
-      df_new1 <- merge_adjacent_regions1(
+      df_new1 <- reg_merge_adjacent_regions1(
         df = df_group,
         chrom = "chrom", start = "start", end = "end", value = "value",
         max_gap = max_gap,
