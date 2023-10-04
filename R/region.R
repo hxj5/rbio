@@ -51,26 +51,26 @@ reg_merge_adjacent_regions1 <- function(df, chrom, start, end, value,
     
   df_new <- df    # allocate enough space for new dataframe
   i <- 1
-  chrom_new <- df_new$chrom[1] <- df$chrom[1]
-  start_new <- df_new$start[1] <- df$start[1]
-  end_new <- df_new$end[1] <- df$end[1]
-  value_new <- df_new$value[1] <- df$value[1]
+  ch_new <- df_new$chrom[1] <- df$chrom[1]
+  s_new <- df_new$start[1] <- df$start[1]
+  e_new <- df_new$end[1] <- df$end[1]
+  v_new <- df_new$value[1] <- df$value[1]
     
   for (j in 2:nrow(df)) {
-    chrom <- df$chrom[j]
-    start <- df$start[j]
-    end <- df$end[j]
-    value <- df$value[j]
+    ch <- df$chrom[j]
+    s <- df$start[j]
+    e <- df$end[j]
+    v <- df$value[j]
     
-    if (identical(chrom, chrom_new) && start - end_new - 1 <= max_gap && 
-        identical(value, value_new)) {       # adjacent region & same value
-      end_new <- df_new$end[i] <- end
-    } else {                                 # a new region
+    if (identical(ch, ch_new) && s - e_new - 1 <= max_gap && 
+        identical(v, v_new)) {            # adjacent region & same value
+      e_new <- df_new$end[i] <- e
+    } else {                              # a new region
       i <- i + 1
-      chrom_new <- df_new$chrom[i] <- chrom
-      start_new <- df_new$start[i] <- start
-      end_new <- df_new$end[i] <- end
-      value_new <- df_new$value[i] <- value
+      ch_new <- df_new$chrom[i] <- ch
+      s_new <- df_new$start[i] <- s
+      e_new <- df_new$end[i] <- e
+      v_new <- df_new$value[i] <- v
     }
   }
     
@@ -99,8 +99,11 @@ reg_merge_adjacent_regions1 <- function(df, chrom, start, end, value,
 #' @param max_gap An integer. The maximum gap length that is allowed between
 #'   two adjacent regions. `0` for strict adjacence.
 #' @param na.rm A bool. Whether the regions containing `NA` should be removed.
+#' @param keep_name A bool. Whether to keep input column names in the returned
+#'   dataframe.
 #' @return A dataframe containing columns "`chrom`", "`start`", "`end`", 
-#'   "`value`", and "`group`" (if available).
+#'   "`value`", and "`group`" (if available). If `keep_name` is `TRUE`, then
+#'   the column names would keep the same with the input dataframe.
 #'
 #' @export
 #' @examples
@@ -120,8 +123,17 @@ reg_merge_adjacent_regions1 <- function(df, chrom, start, end, value,
 #' df2 <- rbind(tmp1, tmp2)
 #' reg_merge_adjacent_regions(df2, "chrom", "begin", "end", "value", "group")
 reg_merge_adjacent_regions <- function(df, chrom, start, end, value, 
-                                       group = NULL, max_gap = 0, na.rm = TRUE)
+                                       group = NULL, max_gap = 0, 
+                                       na.rm = TRUE, keep_name = TRUE)
 {
+  rename_df <- function(df) {
+    if (is.null(group))
+      colnames(df) <- c(chrom, start, end, value)
+    else
+      colnames(df) <- c(chrom, start, end, value, group)
+    return(df)
+  }
+
   if (! chrom %in% colnames(df))
     stop(sprintf("'%s' is not a column of df.", chrom))
   if (! start %in% colnames(df))
@@ -148,6 +160,8 @@ reg_merge_adjacent_regions <- function(df, chrom, start, end, value,
       
   if (nrow(df) <= 0) {
     warning("processed df is empty!")
+    if (keep_name)
+      df <- rename_df(df)
     return(df)
   }
     
@@ -158,6 +172,8 @@ reg_merge_adjacent_regions <- function(df, chrom, start, end, value,
       max_gap = max_gap,
       na.rm = na.rm
     )
+    if (keep_name)
+      df_new <- rename_df(df_new)
     return(df_new)
   } else {
     df_new <- NULL
@@ -173,6 +189,8 @@ reg_merge_adjacent_regions <- function(df, chrom, start, end, value,
       df_new <- base::rbind(df_new, df_new1)
     }
     df_new <- as.data.frame(df_new)
+    if (keep_name)
+      df_new <- rename_df(df_new)
     return(df_new)
   }
 }

@@ -12,7 +12,8 @@ reg_merge_adjacent_regions(
   value,
   group = NULL,
   max_gap = 0,
-  na.rm = TRUE
+  na.rm = TRUE,
+  keep_name = TRUE
 )
 }
 \arguments{
@@ -36,10 +37,14 @@ to \code{NULL} to indicate single group.}
 two adjacent regions. \code{0} for strict adjacence.}
 
 \item{na.rm}{A bool. Whether the regions containing \code{NA} should be removed.}
+
+\item{keep_name}{A bool. Whether to keep input column names in the returned
+dataframe.}
 }
 \value{
 A dataframe containing columns "\code{chrom}", "\code{start}", "\code{end}",
-"\code{value}", and "\code{group}" (if available).
+"\code{value}", and "\code{group}" (if available). If \code{keep_name} is \code{TRUE}, then
+the column names would keep the same with the input dataframe.
 }
 \description{
 This function is aimed to merge adjacent regions with the same \code{value}s in
