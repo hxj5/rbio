@@ -5,7 +5,7 @@
 #' @keywords internal
 #' @noRd
 reg_merge_adjacent_regions1 <- function(df, chrom, start, end, value, 
-                                    max_gap = 0, na.rm = TRUE)
+                                        max_gap = 0, na.rm = TRUE)
 {
   if (! chrom %in% colnames(df))
     stop(sprintf("'%s' is not a column of df.", chrom))
@@ -43,11 +43,11 @@ reg_merge_adjacent_regions1 <- function(df, chrom, start, end, value,
   # check invalid overlapping regions
   n_invalid <- 0
   for (i in 2:nrow(df)) {
-    if (identical(df$chrom[i - 1], df$chrom[i]) && df$start[i] < df$end[i - 1])
+    if (identical(df$chrom[i - 1], df$chrom[i]) && df$start[i] <= df$end[i - 1])
       n_invalid <- n_invalid + 1
   }
   if (n_invalid > 0)
-    stop(sprintf("%d invalid regions with start_next < end_pre!", n_invalid))
+    stop(sprintf("%d invalid regions with start_next <= end_pre!", n_invalid))
     
   df_new <- df    # allocate enough space for new dataframe
   i <- 1
@@ -63,14 +63,14 @@ reg_merge_adjacent_regions1 <- function(df, chrom, start, end, value,
     value <- df$value[j]
     
     if (identical(chrom, chrom_new) && start - end_new - 1 <= max_gap && 
-        identical(value, value_new)) {  # adjacent region & same value
-      end_new <- df_new$end[i] <- df$end[j]
-    } else {     # a new region
+        identical(value, value_new)) {       # adjacent region & same value
+      end_new <- df_new$end[i] <- end
+    } else {                                 # a new region
       i <- i + 1
-      chrom_new <- df_new$chrom[i] <- df$chrom[j]
-      start_new <- df_new$start[i] <- df$start[j]
-      end_new <- df_new$end[i] <- df$end[j]
-      value_new <- df_new$value[i] <- df$value[j]      
+      chrom_new <- df_new$chrom[i] <- chrom
+      start_new <- df_new$start[i] <- start
+      end_new <- df_new$end[i] <- end
+      value_new <- df_new$value[i] <- value
     }
   }
     
@@ -84,7 +84,7 @@ reg_merge_adjacent_regions1 <- function(df, chrom, start, end, value,
 #' This function is aimed to merge adjacent regions with the same `value`s in 
 #' each `group` (if available). The input regions in each group should be
 #' non-overlapping regions (i.e., the `end` position of previous region should
-#' be less or equal to the `start` position of current region).
+#' be smaller than the `start` position of current region).
 #'
 #' @param df A dataframe.
 #' @param chrom A string. Name of the column storing chromosome names of the
@@ -97,7 +97,7 @@ reg_merge_adjacent_regions1 <- function(df, chrom, start, end, value,
 #' @param group A string. Name of the column storing the group names. Setting
 #'   to `NULL` to indicate single group.
 #' @param max_gap An integer. The maximum gap length that is allowed between
-#'   two adjacent regions. `0` for strict adjacent regions.
+#'   two adjacent regions. `0` for strict adjacence.
 #' @param na.rm A bool. Whether the regions containing `NA` should be removed.
 #' @return A dataframe containing columns "`chrom`", "`start`", "`end`", 
 #'   "`value`", and "`group`" (if available).
@@ -120,7 +120,7 @@ reg_merge_adjacent_regions1 <- function(df, chrom, start, end, value,
 #' df2 <- rbind(tmp1, tmp2)
 #' reg_merge_adjacent_regions(df2, "chrom", "begin", "end", "value", "group")
 reg_merge_adjacent_regions <- function(df, chrom, start, end, value, 
-                                   group = NULL, max_gap = 0, na.rm = TRUE)
+                                       group = NULL, max_gap = 0, na.rm = TRUE)
 {
   if (! chrom %in% colnames(df))
     stop(sprintf("'%s' is not a column of df.", chrom))

@@ -33,7 +33,7 @@ regions.}
 to \code{NULL} to indicate single group.}
 
 \item{max_gap}{An integer. The maximum gap length that is allowed between
-two adjacent regions. \code{0} for strict adjacent regions.}
+two adjacent regions. \code{0} for strict adjacence.}
 
 \item{na.rm}{A bool. Whether the regions containing \code{NA} should be removed.}
 }
@@ -45,7 +45,7 @@ A dataframe containing columns "\code{chrom}", "\code{start}", "\code{end}",
 This function is aimed to merge adjacent regions with the same \code{value}s in
 each \code{group} (if available). The input regions in each group should be
 non-overlapping regions (i.e., the \code{end} position of previous region should
-be less or equal to the \code{start} position of current region).
+be smaller than the \code{start} position of current region).
 }
 \examples{
 # single group
