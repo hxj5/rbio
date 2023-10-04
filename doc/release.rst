@@ -2,6 +2,16 @@
 History
 =======
 
+
+Release v0.1.0 (04/10/2023)
+===========================
+* add region.R
+* remove splice_count.R: move the file to other repo designed for specific
+  projects.
+* this repo will only include R codes for routine bioinformatics analysis,
+  but not for specific projects.
+
+
 Release v0.0.3 (23/09/2023)
 ===========================
 * add time.R, io.R, splice_count.R, and package.R.
@@ -17,12 +27,14 @@ Release v0.0.3 (23/09/2023)
 * documenting: improve links in function documenting.
 * documenting: dontrun (do not run) examples that add files or folders.
 
+
 Release v0.0.2 (19/09/2023)
 ===========================
 * add os.R and matrix.R (df-mtx-convert and spmtx-io).
 * start to use devtools for package development.
 * add Installation to README.
 * add release history.
+
 
 Release v0.0.1 (15/09/2023)
 ===========================
