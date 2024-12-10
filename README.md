@@ -6,7 +6,7 @@ Handy R Routine Functions for Bioinformatics Analysis
 
 ```
 # install.packages("devtools")
-devtools::install_github("hxj5/rrbio")
+devtools::install_github("hxj5/rbio")
 ```
 
 ## Notes
